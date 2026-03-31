@@ -1,41 +1,70 @@
-# config.py
-
 import torch
 import os
 import random
 import numpy as np
+from pathlib import Path
 
-# ── Reproducibility ───────────────────────────────────────────
+# ----------------------------
+# Reproducibility
+# ----------------------------
 SEED = 42
 random.seed(SEED)
 np.random.seed(SEED)
 torch.manual_seed(SEED)
 
-# ── Device ────────────────────────────────────────────────────
+# ----------------------------
+# Device
+# ----------------------------
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# ── Mode — switch between pipelines ───────────────────────────
-MODE = "UHCS"   # change to "NEU" to switch pipeline
+# ----------------------------
+# Mode - switch between pipelines
+# ----------------------------
+MODE = "UHCS"   # change to "NEU" if needed
 
-# ── Base Paths ────────────────────────────────────────────────
-BASE_DIR   = "processed"
-MODEL_DIR  = "output/models"
-OUTPUT_DIR = "output"
+# ----------------------------
+# Project root
+# ----------------------------
+# This file is inside src/, so project root is one level up
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-PREDICTIONS_DIR = f"{OUTPUT_DIR}/predictions"
-FIGURES_DIR     = f"{OUTPUT_DIR}/figures"
-LOGS_DIR        = f"{OUTPUT_DIR}/logs"
-GRADCAM_DIR     = f"{OUTPUT_DIR}/gradcam"
+# ----------------------------
+# Candidate data locations
+# ----------------------------
+LOCAL_DATA_DIR = PROJECT_ROOT / "data" / "processed"
+COLAB_DRIVE_DATA_DIR = Path("/content/drive/MyDrive/Colab Notebooks/microstructure_project/processed")
 
-# Create all output folders automatically
-for folder in [MODEL_DIR, PREDICTIONS_DIR,
-               FIGURES_DIR, LOGS_DIR, GRADCAM_DIR]:
-    os.makedirs(folder, exist_ok=True)
+if COLAB_DRIVE_DATA_DIR.exists():
+    BASE_DIR = str(COLAB_DRIVE_DATA_DIR)
+elif LOCAL_DATA_DIR.exists():
+    BASE_DIR = str(LOCAL_DATA_DIR)
+else:
+    raise FileNotFoundError(
+        f"Could not find processed data folder.\n"
+        f"Checked:\n"
+        f" - {COLAB_DRIVE_DATA_DIR}\n"
+        f" - {LOCAL_DATA_DIR}"
+    )
 
-# ── UHCS Settings ─────────────────────────────────────────────
-UHCS_TRAIN = f"{BASE_DIR}/UHCS/train"
-UHCS_VAL   = f"{BASE_DIR}/UHCS/val"
-UHCS_TEST  = f"{BASE_DIR}/UHCS/test"
+# ----------------------------
+# Output paths
+# ----------------------------
+OUTPUT_DIR = PROJECT_ROOT / "output"
+MODEL_DIR = OUTPUT_DIR / "models"
+PREDICTIONS_DIR = OUTPUT_DIR / "predictions"
+FIGURES_DIR = OUTPUT_DIR / "figures"
+LOGS_DIR = OUTPUT_DIR / "logs"
+GRADCAM_DIR = OUTPUT_DIR / "gradcam"
+
+for folder in [MODEL_DIR, PREDICTIONS_DIR, FIGURES_DIR, LOGS_DIR, GRADCAM_DIR]:
+    folder.mkdir(parents=True, exist_ok=True)
+
+# ----------------------------
+# UHCS Settings
+# ----------------------------
+UHCS_TRAIN = os.path.join(BASE_DIR, "UHCS", "train")
+UHCS_VAL   = os.path.join(BASE_DIR, "UHCS", "val")
+UHCS_TEST  = os.path.join(BASE_DIR, "UHCS", "test")
 
 UHCS_CLASSES = [
     "spheroidite",
@@ -47,13 +76,14 @@ UHCS_CLASSES = [
 ]
 UHCS_NUM_CLASSES = len(UHCS_CLASSES)
 
-UHCS_MODEL_PATH = f"{MODEL_DIR}/uhcs_model.pth"
+UHCS_MODEL_PATH = str(MODEL_DIR / "uhcs_model.pth")
 
-# ── NEU Settings ──────────────────────────────────────────────
-NEU_TRAIN       = f"{BASE_DIR}/NEU/train/images"
-NEU_VAL         = f"{BASE_DIR}/NEU/val/images"
-NEU_TEST        = f"{BASE_DIR}/NEU/test/images"
-NEU_ANNOTATIONS = f"{BASE_DIR}/NEU/annotations.csv"
+# ----------------------------
+# NEU Settings
+# ----------------------------
+NEU_TRAIN = os.path.join(BASE_DIR, "NEU", "train")
+NEU_VAL   = os.path.join(BASE_DIR, "NEU", "val")
+NEU_TEST  = os.path.join(BASE_DIR, "NEU", "test")
 
 NEU_CLASSES = [
     "crazing",
@@ -65,25 +95,4 @@ NEU_CLASSES = [
 ]
 NEU_NUM_CLASSES = len(NEU_CLASSES)
 
-NEU_CLASSIFIER_PATH = f"{MODEL_DIR}/neu_classifier.pth"
-NEU_DETECTOR_PATH   = f"{MODEL_DIR}/neu_detector.pth"
-
-# ── Image Settings ────────────────────────────────────────────
-IMG_SIZE       = 224
-NORMALIZE_MEAN = [0.485, 0.456, 0.406]
-NORMALIZE_STD  = [0.229, 0.224, 0.225]
-
-# ── Training Settings ─────────────────────────────────────────
-BATCH_SIZE   = 32
-LR           = 0.0001       # correct for fine tuning pretrained
-EPOCHS       = 50
-WEIGHT_DECAY = 1e-4         # L2 regularization for UHCS imbalance
-NUM_WORKERS  = 2
-
-# ── Model Settings ────────────────────────────────────────────
-BACKBONE   = "resnet50"     # change to "efficientnet" for second run
-PRETRAINED = True
-DROPOUT    = 0.3            # for uncertainty quantification
-
-# ── Uncertainty Settings ──────────────────────────────────────
-MC_SAMPLES = 30             # Monte Carlo dropout forward passes
+NEU_MODEL_PATH = str(MODEL_DIR / "neu_model.pth")
