@@ -57,7 +57,7 @@ UHCS_CLASSES = [
 ]
 UHCS_NUM_CLASSES = len(UHCS_CLASSES)
 
-UHCS_MODEL_PATH = "/content/drive/MyDrive/microsrtucture_project/models/uhcs_model.pth"
+UHCS_MODEL_PATH = "/content/drive/MyDrive/microstructure_project/models/uhcs_model.pth"
 
 # ── NEU Settings ──────────────────────────────────────────────
 NEU_TRAIN       = f"{BASE_DIR}/NEU/train/images"
