@@ -140,7 +140,7 @@ def apply_gradcam(image_path, model, class_names):
 if __name__ == "__main__":
     model, class_names = load_model()
 
-    image_path = "/content/drive/MyDrive/Colab Notebooks/microstructure_project/processed/UHCS/test/spheroidite/Croppedmicrograph536.png"
+    image_path = "/content/drive/MyDrive/Colab Notebooks/microstructure_project/processed/UHCS/test/spheroidite+widmanstatten/Croppedmicrograph717.png"
 
     image, heatmap, overlay, pred_class, confidence = apply_gradcam(
         image_path, model, class_names
