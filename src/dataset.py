@@ -55,6 +55,23 @@ neu_val_transforms = transforms.Compose([
 def get_uhcs_loaders():
 
     # Get labels
+    
+
+
+    train_dataset = datasets.ImageFolder(
+        root      = config.UHCS_TRAIN,
+        transform = uhcs_train_transforms
+    )
+    val_dataset = datasets.ImageFolder(
+        root      = config.UHCS_VAL,
+        transform = uhcs_val_transforms
+    )
+    test_dataset = datasets.ImageFolder(
+        root      = config.UHCS_TEST,
+        transform = uhcs_val_transforms
+    )
+
+
     targets = [label for _, label in train_dataset.samples]
 
 # Count class frequency
@@ -73,19 +90,7 @@ def get_uhcs_loaders():
     replacement=True)
 
 
-    train_dataset = datasets.ImageFolder(
-        root      = config.UHCS_TRAIN,
-        transform = uhcs_train_transforms
-    )
-    val_dataset = datasets.ImageFolder(
-        root      = config.UHCS_VAL,
-        transform = uhcs_val_transforms
-    )
-    test_dataset = datasets.ImageFolder(
-        root      = config.UHCS_TEST,
-        transform = uhcs_val_transforms
-    )
-
+    
     train_loader = DataLoader(
         train_dataset,
         batch_size  = config.BATCH_SIZE,
