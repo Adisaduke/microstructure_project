@@ -65,7 +65,7 @@ else:
 # OPTIMIZER
 # ═════════════════════════════════════════════════════════════
 if config.MODE == "UHCS":
-    lr = 0.0005
+    lr = 0.0003
 else:
     lr = config.LR
 

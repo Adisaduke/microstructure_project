@@ -93,7 +93,7 @@ NUM_WORKERS  = 2
 # ── Model Settings ────────────────────────────────────────────
 BACKBONE   = "resnet50"     # change to "efficientnet" for second run
 PRETRAINED = True
-DROPOUT    = 0.3            # for uncertainty quantification
+DROPOUT    = 0.5            # for uncertainty quantification
 
 # ── Uncertainty Settings ──────────────────────────────────────
 MC_SAMPLES = 30             # Monte Carlo dropout forward passes

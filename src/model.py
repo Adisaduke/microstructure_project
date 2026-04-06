@@ -42,6 +42,8 @@ def _build_resnet50(num_classes):
     # Add Dropout before linear — needed for uncertainty
     num_features = model.fc.in_features
     model.fc = nn.Sequential(
+        nn.Linear(num_features, num_features),
+        nn.ReLU(),
         nn.Dropout(p=config.DROPOUT),
         nn.Linear(num_features, num_classes)
     )
