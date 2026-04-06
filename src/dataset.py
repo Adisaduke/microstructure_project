@@ -3,6 +3,8 @@
 import config
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
+from torch.utils.data import WeightedRandomSampler
+import numpy as np
 
 # ── UHCS Transforms ───────────────────────────────────────────
 # Microstructure specific — grayscale, contrast, full rotation
@@ -48,7 +50,29 @@ neu_val_transforms = transforms.Compose([
 ])
 
 # ── UHCS DataLoaders ──────────────────────────────────────────
+
+
 def get_uhcs_loaders():
+
+    # Get labels
+    targets = [label for _, label in train_dataset.samples]
+
+# Count class frequency
+    class_count = np.bincount(targets)
+
+# Compute class weights
+    class_weights = 1. / class_count
+
+# Assign weight to each sample
+    sample_weights = [class_weights[label] for label in targets]
+
+# Create sampler
+    sampler = WeightedRandomSampler(
+    sample_weights,
+    num_samples=len(sample_weights),
+    replacement=True)
+
+
     train_dataset = datasets.ImageFolder(
         root      = config.UHCS_TRAIN,
         transform = uhcs_train_transforms
@@ -65,7 +89,7 @@ def get_uhcs_loaders():
     train_loader = DataLoader(
         train_dataset,
         batch_size  = config.BATCH_SIZE,
-        shuffle     = True,
+        sampler     = sampler ,
         num_workers = config.NUM_WORKERS
     )
     val_loader = DataLoader(

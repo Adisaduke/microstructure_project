@@ -48,7 +48,12 @@ if config.MODE == "UHCS":
                for count in class_counts]
     weights   = torch.tensor(weights,
                              dtype=torch.float32).to(config.DEVICE)
-    criterion = nn.CrossEntropyLoss(weight=weights)
+    
+    if config.MODE == "UHCS":
+        criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
+    elif config.MODE == "NEU":
+        criterion = nn.CrossEntropyLoss(weight=weights)
+    
     print(f"Class weights : {[round(w, 2) for w in weights.tolist()]}")
 
 else:
@@ -59,9 +64,14 @@ else:
 # ═════════════════════════════════════════════════════════════
 # OPTIMIZER
 # ═════════════════════════════════════════════════════════════
+if config.MODE == "UHCS":
+    lr = 0.0005
+else:
+    lr = config.LR
+
 optimizer = optim.Adam(
     filter(lambda p: p.requires_grad, model.parameters()),
-    lr           = config.LR,
+    lr           = lr,
     weight_decay = config.WEIGHT_DECAY
 )
 
