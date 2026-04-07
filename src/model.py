@@ -82,7 +82,6 @@ if __name__ == "__main__":
     print("\nBuilding UHCS model...")
     uhcs_model = get_model(num_classes=config.UHCS_NUM_CLASSES)
     uhcs_model = uhcs_model.to(config.DEVICE)
-
     dummy_input = torch.randn(2, 3, config.IMG_SIZE,
                               config.IMG_SIZE).to(config.DEVICE)
     output = uhcs_model(dummy_input)
