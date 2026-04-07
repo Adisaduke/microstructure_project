@@ -36,42 +36,17 @@ print(f"Save to : {model_save_path}\n")
 # ═════════════════════════════════════════════════════════════
 # LOSS FUNCTION
 # ═════════════════════════════════════════════════════════════
-if config.MODE == "UHCS":
-    # Weighted loss — fixes UHCS class imbalance
-    class_counts = []
-    for cls in class_names:
-        cls_path = os.path.join(config.UHCS_TRAIN, cls)
-        class_counts.append(len(os.listdir(cls_path)))
 
-    total   = sum(class_counts)
-    weights = [total / (len(class_counts) * count)
-               for count in class_counts]
-    weights   = torch.tensor(weights,
-                             dtype=torch.float32).to(config.DEVICE)
-    
-    if config.MODE == "UHCS":
-        criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
-    elif config.MODE == "NEU":
-        criterion = nn.CrossEntropyLoss(weight=weights)
-    
-    print(f"Class weights : {[round(w, 2) for w in weights.tolist()]}")
-
-else:
-    # NEU is balanced — normal loss
-    criterion = nn.CrossEntropyLoss()
+criterion = nn.CrossEntropyLoss()
 
 
 # ═════════════════════════════════════════════════════════════
 # OPTIMIZER
 # ═════════════════════════════════════════════════════════════
-if config.MODE == "UHCS":
-    lr = 0.0003
-else:
-    lr = config.LR
 
 optimizer = optim.Adam(
     filter(lambda p: p.requires_grad, model.parameters()),
-    lr           = lr,
+    lr           = config.LR,
     weight_decay = config.WEIGHT_DECAY
 )
 

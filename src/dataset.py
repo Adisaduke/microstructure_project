@@ -72,29 +72,12 @@ def get_uhcs_loaders():
     )
 
 
-    targets = [label for _, label in train_dataset.samples]
-
-# Count class frequency
-    class_count = np.bincount(targets)
-
-# Compute class weights
-    class_weights = 1. / class_count
-
-# Assign weight to each sample
-    sample_weights = [class_weights[label] for label in targets]
-
-# Create sampler
-    sampler = WeightedRandomSampler(
-    sample_weights,
-    num_samples=len(sample_weights),
-    replacement=True)
-
 
     
     train_loader = DataLoader(
         train_dataset,
         batch_size  = config.BATCH_SIZE,
-        sampler     = sampler ,
+        shuffle     = True ,
         num_workers = config.NUM_WORKERS
     )
     val_loader = DataLoader(
