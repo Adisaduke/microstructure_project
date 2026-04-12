@@ -42,8 +42,12 @@ def load_model():
 # IMAGE TRANSFORM (must match training)
 # ═════════════════════════════════════════════════════════════
 transform = transforms.Compose([
-    transforms.Resize((224, 224)),
+    transforms.Resize((config.IMG_SIZE, config.IMG_SIZE)),
     transforms.ToTensor(),
+    transforms.Normalize(
+        mean=config.NORMALIZE_MEAN,
+        std=config.NORMALIZE_STD
+    )
 ])
 
 
@@ -52,21 +56,29 @@ transform = transforms.Compose([
 # ═════════════════════════════════════════════════════════════
 def predict_image(image_path, model, class_names):
     image = Image.open(image_path).convert("RGB")
-    image = transform(image)
-    image = image.unsqueeze(0)  # add batch dimension
-    image = image.to(config.DEVICE)
+
+    input_tensor = transform(image)
+    input_tensor = input_tensor.unsqueeze(0).to(config.DEVICE)
 
     with torch.no_grad():
-        outputs = model(image)
+        outputs = model(input_tensor)
         probs = torch.softmax(outputs, dim=1)
 
-        conf, pred = torch.max(probs, dim=1)
+        # Top-K predictions
+        topk = 3
+        top_probs, top_idxs = torch.topk(probs, topk)
 
-    pred_class = class_names[pred.item()]
-    confidence = conf.item()
+    top_probs = top_probs.squeeze().cpu().numpy()
+    top_idxs  = top_idxs.squeeze().cpu().numpy()
 
-    return pred_class, confidence
+    print("\nTop Predictions:")
+    for i in range(topk):
+        class_name = class_names[top_idxs[i]]
+        confidence = top_probs[i]
+        print(f"{i+1}. {class_name} → {confidence:.4f}")
 
+    # Return top-1 for compatibility
+    return class_names[top_idxs[0]], top_probs[0]
 
 # ═════════════════════════════════════════════════════════════
 # RUN PREDICTION
