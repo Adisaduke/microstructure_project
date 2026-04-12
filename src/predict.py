@@ -90,7 +90,11 @@ def mc_dropout_predict(image_path, model, class_names, n_runs=20):
     input_tensor = transform(image)
     input_tensor = input_tensor.unsqueeze(0).to(config.DEVICE)
 
-    model.train()  # 🔥 Enable dropout
+    model.eval()  
+    
+    for module in model.modules():
+        if isinstance(module, torch.nn.Dropout):
+            module.train()
 
     all_probs = []
 
