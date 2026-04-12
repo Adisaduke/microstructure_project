@@ -77,7 +77,6 @@ if __name__ == "__main__":
 
     print(f"Testing backbone: {config.BACKBONE}")
     print(f"Device          : {config.DEVICE}")
-
     # Test UHCS model
     print("\nBuilding UHCS model...")
     uhcs_model = get_model(num_classes=config.UHCS_NUM_CLASSES)

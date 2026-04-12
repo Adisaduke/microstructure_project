@@ -3,6 +3,7 @@
 import torch
 import torch.nn.functional as F
 import numpy as np
+import torch.nn as nn
 import cv2
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -18,6 +19,11 @@ from model import get_model
 def load_model():
     if config.MODE == "UHCS":
         model = get_model(config.UHCS_NUM_CLASSES)
+        num_features = model.fc.in_features
+        model.fc = nn.Sequential(
+            nn.Dropout(p=config.DROPOUT),
+            nn.Linear(num_features, config.UHCS_NUM_CLASSES)
+        )
         model_path = config.UHCS_MODEL_PATH
 
     elif config.MODE == "NEU":
