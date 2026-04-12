@@ -19,11 +19,8 @@ from model import get_model
 def load_model():
     if config.MODE == "UHCS":
         model = get_model(config.UHCS_NUM_CLASSES)
-        num_features = model.fc.in_features
-        model.fc = nn.Sequential(
-            nn.Dropout(p=config.DROPOUT),
-            nn.Linear(num_features, config.UHCS_NUM_CLASSES)
-        )
+        checkpoint = torch.load(model_path, map_location=config.DEVICE)
+        model.load_state_dict(checkpoint["model"])
         model_path = config.UHCS_MODEL_PATH
 
     elif config.MODE == "NEU":
