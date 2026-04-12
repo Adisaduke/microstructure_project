@@ -4,7 +4,7 @@ import torch
 import torchvision.transforms as transforms
 from PIL import Image
 import os
-
+import numpy as np
 import config
 from model import get_model
 
@@ -52,7 +52,7 @@ transform = transforms.Compose([
 
 
 # ═════════════════════════════════════════════════════════════
-# PREDICT FUNCTION
+# PREDICT FUNCTION (Top-K)
 # ═════════════════════════════════════════════════════════════
 def predict_image(image_path, model, class_names):
     image = Image.open(image_path).convert("RGB")
@@ -80,6 +80,45 @@ def predict_image(image_path, model, class_names):
     # Return top-1 for compatibility
     return class_names[top_idxs[0]], top_probs[0]
 
+
+# ═════════════════════════════════════════════════════════════
+# MONTE CARLO DROPOUT FUNCTION (NEW)
+# ═════════════════════════════════════════════════════════════
+def mc_dropout_predict(image_path, model, class_names, n_runs=20):
+    image = Image.open(image_path).convert("RGB")
+
+    input_tensor = transform(image)
+    input_tensor = input_tensor.unsqueeze(0).to(config.DEVICE)
+
+    model.train()  # 🔥 Enable dropout
+
+    all_probs = []
+
+    for _ in range(n_runs):
+        outputs = model(input_tensor)
+        probs = torch.softmax(outputs, dim=1)
+        all_probs.append(probs.cpu().detach().numpy())
+
+    all_probs = np.array(all_probs)
+    all_probs = all_probs.squeeze(1)
+
+    mean_probs = np.mean(all_probs, axis=0)
+    std_probs  = np.std(all_probs, axis=0)
+
+    pred_idx = np.argmax(mean_probs)
+    pred_class = class_names[pred_idx]
+
+    confidence = mean_probs[pred_idx]
+    uncertainty = std_probs[pred_idx]
+
+    print("\n=== Monte Carlo Dropout ===")
+    print(f"Prediction  : {pred_class}")
+    print(f"Confidence  : {confidence:.4f}")
+    print(f"Uncertainty : {uncertainty:.4f}")
+
+    return pred_class, confidence, uncertainty
+
+
 # ═════════════════════════════════════════════════════════════
 # RUN PREDICTION
 # ═════════════════════════════════════════════════════════════
@@ -88,9 +127,11 @@ if __name__ == "__main__":
 
     # CHANGE THIS PATH
     image_path = "/content/drive/MyDrive/Colab Notebooks/microstructure_project/processed/UHCS/test/pearlite+widmanstatten/Croppedmicrograph1078.png"
+
     if not os.path.exists(image_path):
         print("Image not found. Check path.")
     else:
+        # 🔹 Normal prediction
         pred_class, confidence = predict_image(
             image_path, model, class_names
         )
@@ -99,3 +140,8 @@ if __name__ == "__main__":
         print(f"Image      : {image_path}")
         print(f"Prediction : {pred_class}")
         print(f"Confidence : {confidence:.4f}")
+
+        # 🔹 Monte Carlo Dropout prediction (NEW)
+        mc_pred, mc_conf, mc_uncertainty = mc_dropout_predict(
+            image_path, model, class_names
+        )
