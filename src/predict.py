@@ -130,7 +130,7 @@ if __name__ == "__main__":
     model, class_names = load_model()
 
     # CHANGE THIS PATH
-    image_path = "/content/drive/MyDrive/Colab Notebooks/microstructure_project/processed/UHCS/test/spheroidite+widmanstatten/Croppedmicrograph821.png"
+    image_path = "/content/drive/MyDrive/Colab Notebooks/microstructure_project/processed/UHCS/test/spheroidite+widmanstatten/Croppedmicrograph989.png"
 
     if not os.path.exists(image_path):
         print("Image not found. Check path.")
