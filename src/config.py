@@ -76,7 +76,7 @@ NEU_CLASSES = [
 NEU_NUM_CLASSES = len(NEU_CLASSES)
 
 NEU_CLASSIFIER_PATH = f"{MODEL_DIR}/neu_classifier.pth"
-NEU_DETECTOR_PATH   = f"{MODEL_DIR}/neu_detector.pth"
+NEU_DETECTOR_PATH   = "/content/drive/MyDrive/microstructure_project/models/neu_yolo_best.pt"
 
 # ── Image Settings ────────────────────────────────────────────
 IMG_SIZE       = 224
