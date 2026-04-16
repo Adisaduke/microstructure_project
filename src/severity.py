@@ -81,6 +81,6 @@ def analyze_image(image_path, model):
 if __name__ == "__main__":
     model = load_detector()
 
-    image_path = "/content/drive/MyDrive/microstructure_project/data/NEU_DET/test/images/crazing_9_jpg.rf.a1d9b959edabd458da7e8bf46ccd4beb"
+    image_path = "/content/drive/MyDrive/microstructure_project/data/NEU_DET/test/images/crazing_9_jpg.rf.a1d9b959edabd458da7e8bf46ccd4beb.jpg"
 
     analyze_image(image_path, model)
