@@ -79,8 +79,30 @@ def analyze_image(image_path, model):
 # RUN
 # ═════════════════════════════════════════════════════════════
 if __name__ == "__main__":
-    model = load_detector()
+    
+    # Load model
+    model = YOLO(config.NEU_DETECTOR_PATH)
+    print(f"Loaded YOLO model from: {config.NEU_DETECTOR_PATH}")
 
-    image_path = "/content/drive/MyDrive/microstructure_project/data/NEU_DET/test/images/crazing_9_jpg.rf.a1d9b959edabd458da7e8bf46ccd4beb.jpg"
+    # Test multiple images
+    image_paths = [
+        "/content/drive/MyDrive/microstructure_project/data/NEU_DET/test/images/crazing_9_jpg.rf.a1d9b959edabd458da7e8bf46ccd4beb.jpg",
+        "/content/drive/MyDrive/microstructure_project/data/NEU_DET/test/images/inclusion_1.jpg",
+        "/content/drive/MyDrive/microstructure_project/data/NEU_DET/test/images/patches_1.jpg",
+    ]
 
-    analyze_image(image_path, model)
+    for image_path in image_paths:
+        print(f"\nTesting: {image_path}")
+
+        results = model(image_path, conf=0.05)  # 🔥 LOWER CONFIDENCE
+
+        boxes = results[0].boxes
+
+        if boxes is None or len(boxes) == 0:
+            print("No detections")
+        else:
+            print("Detections found:")
+            for box in boxes:
+                cls_id = int(box.cls[0])
+                conf   = float(box.conf[0])
+                print(f"Class: {cls_id}, Confidence: {conf:.4f}")
