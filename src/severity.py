@@ -1,90 +1,61 @@
 # severity.py
 
 from ultralytics import YOLO
-import config
-import cv2
 import numpy as np
+import config
 
 
 # ═════════════════════════════════════════════════════════════
-# LOAD YOLO MODEL
+# LOAD MODEL
 # ═════════════════════════════════════════════════════════════
-def load_detector():
+def load_model():
     model = YOLO(config.NEU_DETECTOR_PATH)
     print(f"Loaded YOLO model from: {config.NEU_DETECTOR_PATH}")
     return model
 
 
 # ═════════════════════════════════════════════════════════════
-# COMPUTE SEVERITY
+# SEVERITY LOGIC
 # ═════════════════════════════════════════════════════════════
-def compute_severity(box, image_shape):
-    """
-    box: [x1, y1, x2, y2]
-    image_shape: (H, W, C)
-    """
+def compute_severity(boxes, names):
+    if boxes is None or len(boxes) == 0:
+        return "No Defect", 0, 0.0, "NONE"
 
-    x1, y1, x2, y2 = box
-    box_area = (x2 - x1) * (y2 - y1)
+    confidences = []
+    classes = []
 
-    image_area = image_shape[0] * image_shape[1]
+    for box in boxes:
+        conf = float(box.conf[0])
+        cls  = int(box.cls[0])
 
-    ratio = box_area / image_area
+        confidences.append(conf)
+        classes.append(cls)
 
-    # Severity rules
-    if ratio < 0.02:
+    avg_conf = np.mean(confidences)
+    num_boxes = len(boxes)
+
+    # Majority class
+    defect_class = max(set(classes), key=classes.count)
+    defect_name = names[defect_class]
+
+    # ── Severity Rules ──
+    if avg_conf < 0.15:
         severity = "LOW"
-    elif ratio < 0.10:
+    elif avg_conf < 0.4:
         severity = "MEDIUM"
     else:
         severity = "HIGH"
 
-    return severity, ratio
-
-
-# ═════════════════════════════════════════════════════════════
-# RUN SEVERITY ANALYSIS
-# ═════════════════════════════════════════════════════════════
-def analyze_image(image_path, model):
-    results = model(image_path)
-
-    img = cv2.imread(image_path)
-    h, w, _ = img.shape
-
-    print("\n=== DETECTIONS ===")
-
-    for r in results:
-        boxes = r.boxes
-
-        if boxes is None:
-            print("No defects detected.")
-            return
-
-        for box in boxes:
-            xyxy = box.xyxy[0].cpu().numpy()
-            cls  = int(box.cls[0])
-            conf = float(box.conf[0])
-
-            class_name = model.names[cls]
-
-            severity, ratio = compute_severity(xyxy, img.shape)
-
-            print(f"\nDefect     : {class_name}")
-            print(f"Confidence : {conf:.4f}")
-            print(f"Severity   : {severity}")
-            print(f"Area Ratio : {ratio:.4f}")
+    return defect_name, num_boxes, avg_conf, severity
 
 
 # ═════════════════════════════════════════════════════════════
 # RUN
 # ═════════════════════════════════════════════════════════════
 if __name__ == "__main__":
+    model = load_model()
 
-    # Load model
-    model = YOLO(config.NEU_DETECTOR_PATH)
-    print(f"Loaded YOLO model from: {config.NEU_DETECTOR_PATH}")
-
-    # Test multiple images
+    # TEST IMAGE
     image_paths = [
         "/content/drive/MyDrive/microstructure_project/data/NEU_DET/test/images/crazing_9_jpg.rf.a1d9b959edabd458da7e8bf46ccd4beb.jpg",
         "/content/drive/MyDrive/microstructure_project/data/NEU_DET/test/images/inclusion_7_jpg.rf.e84f7d387b8ce1c9c9923d633b12fc03.jpg",
@@ -92,17 +63,16 @@ if __name__ == "__main__":
     ]
 
     for image_path in image_paths:
-        print(f"\nTesting: {image_path}")
-
-        results = model(image_path, conf=0.05)  # 🔥 LOWER CONFIDENCE
+        results = model(image_path, conf=0.05)
 
         boxes = results[0].boxes
+        names = results[0].names
 
-        if boxes is None or len(boxes) == 0:
-            print("No detections")
-        else:
-            print("Detections found:")
-            for box in boxes:
-                cls_id = int(box.cls[0])
-                conf   = float(box.conf[0])
-                print(f"Class: {cls_id}, Confidence: {conf:.4f}")
+        defect, count, avg_conf, severity = compute_severity(boxes, names)
+
+        print("\n=== SEVERITY RESULT ===")
+        print(f"Image           : {image_path}")
+        print(f"Defect Type     : {defect}")
+        print(f"Boxes Detected  : {count}")
+        print(f"Avg Confidence  : {avg_conf:.4f}")
+        print(f"Severity Level  : {severity}")
