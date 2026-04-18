@@ -8,6 +8,7 @@ import torch
 import cv2
 import os
 from pathlib import Path
+from predict import predict_image
 
 # ─────────────────────────────────────────────
 # LOAD UHCS CLASSIFIER
@@ -54,8 +55,14 @@ def run_system(image_path, mode="UHCS"):
 
         model, class_names = load_classifier()
 
-        image, heatmap, overlay, pred_class, confidence = apply_gradcam(
-            image_path, model, class_names
+        # Get Top-3 predictions
+        top_results, pred_class, confidence = predict_image(
+        image_path, model, class_names
+        )
+
+# GradCAM still uses top-1 internally
+        image, heatmap, overlay, _, _ = apply_gradcam(
+        image_path, model, class_names
         )
 
         print("\n=== CLASSIFICATION RESULT ===")
@@ -69,8 +76,7 @@ def run_system(image_path, mode="UHCS"):
         print(f"GradCAM saved → {save_path}")
 
         return {
-            "class": pred_class,
-            "confidence": confidence,
+            "top_predictions": top_results,
             "gradcam": save_path
         }
 

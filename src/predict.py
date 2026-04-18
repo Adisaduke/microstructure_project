@@ -77,8 +77,20 @@ def predict_image(image_path, model, class_names):
         confidence = top_probs[i]
         print(f"{i+1}. {class_name} → {confidence:.4f}")
 
-    # Return top-1 for compatibility
-    return class_names[top_idxs[0]], top_probs[0]
+   
+    top_results = []
+
+    for i in range(topk):
+        class_name = class_names[top_idxs[i]]
+        confidence = float(top_probs[i])
+
+        top_results.append({
+        "class": class_name,
+        "confidence": confidence
+    })
+
+    # Return BOTH (keep compatibility)
+    return top_results, top_results[0]["class"], top_results[0]["confidence"]
 
 
 # ═════════════════════════════════════════════════════════════
