@@ -5,6 +5,7 @@ import config
 import numpy as np
 import cv2
 import os
+from pathlib import Path
 
 
 # ─────────────────────────────────────────────
@@ -93,9 +94,9 @@ if __name__ == "__main__":
     model = load_detector()
 
     image_paths = [
-        "/content/drive/MyDrive/microstructure_project/data/NEU_DET/test/images/crazing_9_jpg.rf.a1d9b959edabd458da7e8bf46ccd4beb.jpg",
-        "/content/drive/MyDrive/microstructure_project/data/NEU_DET/test/images/inclusion_7_jpg.rf.e84f7d387b8ce1c9c9923d633b12fc03.jpg",
-        "/content/drive/MyDrive/microstructure_project/data/NEU_DET/test/images/patches_32_jpg.rf.d49d033b6294470ccf79c15b686b04db.jpg",
+         str(Path(__file__).resolve().parent.parent / "data" / "NEU_DET" / "test" / "images" / "crazing_9_jpg.rf.a1d9b959edabd458da7e8bf46ccd4beb.jpg"),
+         str(Path(__file__).resolve().parent.parent / "data" / "NEU_DET" / "test" / "images" / "inclusion_7_jpg.rf.e84f7d387b8ce1c9c9923d633b12fc03.jpg"),
+         str(Path(__file__).resolve().parent.parent / "data" / "NEU_DET" / "test" / "images" / "patches_32_jpg.rf.d49d033b6294470ccf79c15b686b04db.jpg"),
     ]
 
     for img in image_paths:

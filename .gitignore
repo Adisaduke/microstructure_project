@@ -4,6 +4,8 @@ __pycache__/
 data/
 processed/
 output/
+models/
 
 *.pth
 *.pt
+.env

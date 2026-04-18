@@ -7,7 +7,7 @@ from model import get_model
 import torch
 import cv2
 import os
-
+from pathlib import Path
 
 # ─────────────────────────────────────────────
 # LOAD UHCS CLASSIFIER
@@ -64,7 +64,7 @@ def run_system(image_path, mode="UHCS"):
 
         # Save GradCAM image
         save_path = os.path.join(config.GRADCAM_DIR, os.path.basename(image_path))
-        cv2.imwrite(save_path, overlay)
+        cv2.imwrite(save_path, overlay.astype("uint8"))
 
         print(f"GradCAM saved → {save_path}")
 
@@ -83,16 +83,14 @@ def run_system(image_path, mode="UHCS"):
 # ─────────────────────────────────────────────
 if __name__ == "__main__":
 
-    # 🔹 CHANGE THIS FOR TESTING
-
     # NEU TEST
     run_system(
-        "/content/drive/MyDrive/microstructure_project/data/NEU_DET/test/images/patches_32_jpg.rf.d49d033b6294470ccf79c15b686b04db.jpg",
+        str(Path(__file__).resolve().parent.parent / "data" / "NEU_DET" / "test" / "images" / "patches_32_jpg.rf.d49d033b6294470ccf79c15b686b04db.jpg"),
         mode="NEU"
     )
 
     # UHCS TEST
     run_system(
-        "/content/drive/MyDrive/Colab Notebooks/microstructure_project/processed/UHCS/test/spheroidite/Croppedmicrograph465.png",
+        str(Path(__file__).resolve().parent.parent / "data" / "processed" / "UHCS" / "test" / "spheroidite" / "Croppedmicrograph465.png"),
         mode="UHCS"
     )
