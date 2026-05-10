@@ -25,7 +25,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 LOCAL_DATA_DIR = PROJECT_ROOT / "data"
 
 # GOOGLE DRIVE PATH (COLAB)
-DRIVE_ROOT = Path("/content/drive/MyDrive/microstructure_project")
+DRIVE_ROOT = Path("/content/drive/MyDrive//Colab Notebooks/microstructure_project")
 
 DRIVE_DATA_DIR   = DRIVE_ROOT / "data"
 DRIVE_OUTPUT_DIR = DRIVE_ROOT / "output"
