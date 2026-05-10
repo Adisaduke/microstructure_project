@@ -10,7 +10,7 @@ from pathlib import Path
 # REPRODUCIBILITY
 # ============================================================
 
-SEED = 999
+SEED = 123
 
 random.seed(SEED)
 np.random.seed(SEED)
@@ -29,7 +29,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # MODE
 # ============================================================
 
-MODE = "UHCS"
+MODE = "NEU"
 
 # ============================================================
 # PROJECT ROOT
