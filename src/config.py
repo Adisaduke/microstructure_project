@@ -134,7 +134,7 @@ NEU_TRAIN       = str(BASE_DIR / "data" / "NEU_DET" / "train" / "images")
 NEU_VAL         = str(BASE_DIR / "data" / "NEU_DET" / "valid" / "images")
 NEU_TEST        = str(BASE_DIR / "data" / "NEU_DET" / "test" / "images")
 
-NEU_ANNOTATIONS = str(BASE_DIR / "data" / "NEU_DET" / "annotations.csv")
+NEU_ANNOTATIONS = str(BASE_DIR / "data" / "NEU_DET" / "data.yaml")
 
 NEU_CLASSES = [
     "crazing",
