@@ -27,7 +27,7 @@ LOCAL_DATA_DIR = PROJECT_ROOT / "data"
 # GOOGLE DRIVE PATH (COLAB)
 DRIVE_ROOT = Path("/content/drive/MyDrive//Colab Notebooks/microstructure_project")
 
-DRIVE_DATA_DIR   = DRIVE_ROOT / "processed"
+DRIVE_DATA_DIR   = DRIVE_ROOT
 DRIVE_OUTPUT_DIR = DRIVE_ROOT / "output"
 DRIVE_MODEL_DIR  = DRIVE_ROOT / "models"
 
