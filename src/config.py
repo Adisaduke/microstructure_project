@@ -10,7 +10,7 @@ from pathlib import Path
 # REPRODUCIBILITY
 # ============================================================
 
-SEED = 42
+SEED = 123
 
 random.seed(SEED)
 np.random.seed(SEED)
@@ -118,10 +118,10 @@ UHCS_NUM_CLASSES = len(UHCS_CLASSES)
 # ============================================================
 
 # CHANGE THIS WHEN SWITCHING MODELS
-BACKBONE = "efficientnet"
+BACKBONE = "restnet50"
 
 if BACKBONE == "resnet50":
-    UHCS_MODEL_PATH = str(MODEL_DIR / "resnet50_model.pth")
+    UHCS_MODEL_PATH = str(MODEL_DIR / "resnet50_model123.pth")
 
 elif BACKBONE == "efficientnet":
     UHCS_MODEL_PATH = str(MODEL_DIR / "efficientnet_model.pth")
