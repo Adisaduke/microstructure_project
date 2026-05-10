@@ -118,7 +118,7 @@ UHCS_NUM_CLASSES = len(UHCS_CLASSES)
 # ============================================================
 
 # CHANGE THIS WHEN SWITCHING MODELS
-BACKBONE = "restnet50"
+BACKBONE = "resnet50"
 
 if BACKBONE == "resnet50":
     UHCS_MODEL_PATH = str(MODEL_DIR / "resnet50_model123.pth")
