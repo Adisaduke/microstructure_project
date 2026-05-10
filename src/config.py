@@ -16,31 +16,54 @@ torch.manual_seed(SEED)
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ── Mode — switch between pipelines ───────────────────────────
-MODE = "UHCS"   # change to "NEU" to switch pipeline
+MODE = "UHCS"  
 
 # ── Base Paths ────────────────────────────────────────────────
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-# ❌ before: BASE_DIR = PROJECT_ROOT / "data" / "processed"
-# ✅ fix:
-BASE_DIR = PROJECT_ROOT / "data"
+# LOCAL PATH
+LOCAL_DATA_DIR = PROJECT_ROOT / "data"
 
-OUTPUT_DIR = str(PROJECT_ROOT / "output")
-MODEL_DIR  = str(PROJECT_ROOT / "models")
+# GOOGLE DRIVE PATH (COLAB)
+DRIVE_ROOT = Path("/content/drive/MyDrive/microstructure_project")
 
+DRIVE_DATA_DIR   = DRIVE_ROOT / "data"
+DRIVE_OUTPUT_DIR = DRIVE_ROOT / "output"
+DRIVE_MODEL_DIR  = DRIVE_ROOT / "models"
+
+# AUTO SWITCH
+if DRIVE_ROOT.exists():
+    print("Running in Google Colab with Drive")
+
+    BASE_DIR   = DRIVE_DATA_DIR
+    OUTPUT_DIR = str(DRIVE_OUTPUT_DIR)
+    MODEL_DIR  = str(DRIVE_MODEL_DIR)
+
+else:
+    print("Running on Local System")
+
+    BASE_DIR   = LOCAL_DATA_DIR
+    OUTPUT_DIR = str(PROJECT_ROOT / "output")
+    MODEL_DIR  = str(PROJECT_ROOT / "models")
+
+
+# OUTPUT SUBFOLDERS
 PREDICTIONS_DIR = f"{OUTPUT_DIR}/predictions"
 FIGURES_DIR     = f"{OUTPUT_DIR}/figures"
 LOGS_DIR        = f"{OUTPUT_DIR}/logs"
 GRADCAM_DIR     = f"{OUTPUT_DIR}/gradcam"
 
-# Create all output folders automatically
-for folder in [MODEL_DIR, PREDICTIONS_DIR,
-               FIGURES_DIR, LOGS_DIR, GRADCAM_DIR]:
+# CREATE FOLDERS
+for folder in [
+    MODEL_DIR,
+    PREDICTIONS_DIR,
+    FIGURES_DIR,
+    LOGS_DIR,
+    GRADCAM_DIR
+]:
     os.makedirs(folder, exist_ok=True)
 
 # ── UHCS Settings ─────────────────────────────────────────────
-# ❌ before: f"{BASE_DIR}/UHCS/train"
-# ✅ fix:
 UHCS_TRAIN = str(BASE_DIR / "processed" / "UHCS" / "train")
 UHCS_VAL   = str(BASE_DIR / "processed" / "UHCS" / "val")
 UHCS_TEST  = str(BASE_DIR / "processed" / "UHCS" / "test")
@@ -58,10 +81,8 @@ UHCS_NUM_CLASSES = len(UHCS_CLASSES)
 UHCS_MODEL_PATH = str(PROJECT_ROOT / "models/uhcs_model.pth")
 
 # ── NEU Settings ──────────────────────────────────────────────
-# ❌ before: BASE_DIR already wrong
-# ✅ fix paths:
 NEU_TRAIN       = str(BASE_DIR / "NEU_DET" / "train" / "images")
-NEU_VAL         = str(BASE_DIR / "NEU_DET" / "valid" / "images")  # ⚠️ Roboflow uses "valid"
+NEU_VAL         = str(BASE_DIR / "NEU_DET" / "valid" / "images")  
 NEU_TEST        = str(BASE_DIR / "NEU_DET" / "test" / "images")
 NEU_ANNOTATIONS = str(BASE_DIR / "NEU_DET" / "annotations.csv")
 
@@ -91,7 +112,7 @@ WEIGHT_DECAY = 1e-4
 NUM_WORKERS  = 2
 
 # ── Model Settings ────────────────────────────────────────────
-BACKBONE   = "resnet50"
+BACKBONE   = "efficientnet"
 PRETRAINED = True
 DROPOUT    = 0.5
 
