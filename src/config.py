@@ -10,7 +10,7 @@ from pathlib import Path
 # REPRODUCIBILITY
 # ============================================================
 
-SEED = 123
+SEED = 999
 
 random.seed(SEED)
 np.random.seed(SEED)
@@ -124,7 +124,7 @@ if BACKBONE == "resnet50":
     UHCS_MODEL_PATH = str(MODEL_DIR / "resnet50_model999.pth")
 
 elif BACKBONE == "efficientnet":
-    UHCS_MODEL_PATH = str(MODEL_DIR / "efficientnet_model123.pth")
+    UHCS_MODEL_PATH = str(MODEL_DIR / "efficientnet_model999.pth")
 
 # ============================================================
 # NEU DATASET
