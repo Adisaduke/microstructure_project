@@ -10,8 +10,6 @@ import config
 from dataset import get_uhcs_loaders
 
 
-EPOCHS = 20 
-
 # ═════════════════════════════════════════════════════════════
 # SIMPLE CNN — NO PRETRAINED WEIGHTS
 # ═════════════════════════════════════════════════════════════
@@ -150,7 +148,7 @@ def validate(model, loader, criterion, device):
 # ═════════════════════════════════════════════════════════════
 best_val_acc = 0.0
 
-for epoch in range(EPOCHS):
+for epoch in range(config.EPOCHS):
     train_loss, train_acc = train_one_epoch(
         model, train_loader, criterion, optimizer, config.DEVICE
     )
