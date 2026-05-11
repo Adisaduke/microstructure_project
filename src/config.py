@@ -10,7 +10,7 @@ from pathlib import Path
 # REPRODUCIBILITY
 # ============================================================
 
-SEED = 123
+SEED = 42
 
 random.seed(SEED)
 np.random.seed(SEED)
@@ -118,13 +118,13 @@ UHCS_NUM_CLASSES = len(UHCS_CLASSES)
 # ============================================================
 
 # CHANGE THIS WHEN SWITCHING MODELS
-BACKBONE = "efficientnet"
+BACKBONE = "resnet50"
 
 if BACKBONE == "resnet50":
-    UHCS_MODEL_PATH = str(MODEL_DIR / "resnet50_model999.pth")
+    UHCS_MODEL_PATH = str(MODEL_DIR / "resnet50_model.pth")
 
 elif BACKBONE == "efficientnet":
-    UHCS_MODEL_PATH = str(MODEL_DIR / "efficientnet_model999.pth")
+    UHCS_MODEL_PATH = str(MODEL_DIR / "efficientnet_model.pth")
 
 # ============================================================
 # NEU DATASET
@@ -134,7 +134,7 @@ NEU_TRAIN       = str(BASE_DIR / "data" / "NEU_DET" / "train" / "images")
 NEU_VAL         = str(BASE_DIR / "data" / "NEU_DET" / "valid" / "images")
 NEU_TEST        = str(BASE_DIR / "data" / "NEU_DET" / "test" / "images")
 
-NEU_ANNOTATIONS = str(BASE_DIR / "data" / "NEU_DET" / "data.yaml")
+NEU_ANNOTATIONS = str(BASE_DIR / "data" / "NEU_DET" / "annotations.csv")
 
 NEU_CLASSES = [
     "crazing",
