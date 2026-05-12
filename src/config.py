@@ -29,7 +29,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # MODE
 # ============================================================
 
-MODE = "NEU"
+MODE = "UHCS"
 
 # ============================================================
 # PROJECT ROOT
